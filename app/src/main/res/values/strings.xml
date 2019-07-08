@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Instagram</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="description_hint">Enter a description</string>
+    <string name="create">Create</string>
+    <string name="refresh">Refresh</string>
 </resources>

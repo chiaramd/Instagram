@@ -2,6 +2,7 @@ package com.example.instagram;
 
 import android.app.Application;
 
+import com.example.instagram.model.Post;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -25,15 +26,21 @@ public class ParseApplication extends Application {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.networkInterceptors().add(httpLoggingInterceptor);
 
-        Parse.initialize(new Parse.Configuration.Builder(this)
-            .applicationId("instaChiara")
-            .clientKey(null) // set explicitly unless clientKey is explicitly configured on Parse server
-            .clientBuilder(builder)
-            .server("http://chiaramd-fbu-instagram.herokuapp.com/parse").build());
+        // register ParseUser as a subclass to tell Parse this is a custom Parse model
+        ParseObject.registerSubclass(Post.class);
+
+        final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
+                .applicationId("instaChiara")
+                .clientKey("Rome2012") // set explicitly unless clientKey is explicitly configured on Parse server
+                .clientBuilder(builder)
+                .server("http://chiaramd-fbu-instagram.herokuapp.com/parse")
+                .build();
+
+        Parse.initialize(configuration);
 
         // New test creation of object
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+//        ParseObject testObject = new ParseObject("TestObject");
+//        testObject.put("foo", "bar");
+//        testObject.saveInBackground();
     }
 }
