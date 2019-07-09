@@ -10,15 +10,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.example.instagram.model.Post;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -36,6 +39,7 @@ public class HomeActivity extends AppCompatActivity {
     @BindView(R.id.btnCreate) Button btnCreate;
     @BindView(R.id.btnRefresh) Button btnRefresh;
     @BindView(R.id.ivPreview) ImageView ivPreview;
+    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 //    @BindView(R.id.pivPreview) ParseImageView pivPreview;
 
     private final String TAG = "HomeActivity";
@@ -49,6 +53,24 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.miHome:
+                        Log.d(TAG, "Home item clicked");
+                        return true;
+                    case R.id.miNewPost:
+                        Log.d(TAG, "New post item clicked");
+                        return true;
+                    case R.id.miUserProfile:
+                        Log.d(TAG, "User profile item clicked");
+                        return true;
+                    default: return true;
+                }
+            }
+        });
         /*Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,6 +84,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 */
 //        loadTopPosts();
+
     }
 
     @OnClick(R.id.btnCreate)

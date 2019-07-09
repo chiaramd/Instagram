@@ -4,4 +4,7 @@
     <string name="description_hint">Enter a description</string>
     <string name="create">Create</string>
     <string name="refresh">Refresh</string>
+    <string name="home">Home</string>
+    <string name="new_post">New Post</string>
+    <string name="user_profile">User Profile</string>
 </resources>
