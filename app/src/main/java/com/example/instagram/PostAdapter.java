@@ -1,5 +1,6 @@
 package com.example.instagram;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -10,13 +11,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.model.Post;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,10 +56,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Post post = posts.get(position);
         holder.tvDescription.setText(post.getDescription());
         holder.tvName.setText(post.getUser().getUsername());
+        holder.tvCreatedAt.setText(getCreationDateTime(post.getCreatedAt()));
         Glide.with(context)
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))
                 .into(holder.ivPostImage);
+
+        ParseUser user = post.getUser();
+        ParseFile profilePic = user.getParseFile("profileImage");
+        if (profilePic != null) {
+            Glide.with(context)
+                    .load(profilePic.getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.ivProfileImage);
+        } else {
+            Glide.with(context)
+                    .load(context.getResources().getIdentifier("ic_user_profile_filled", "drawable", context.getPackageName()))
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.ivProfileImage);
+        }
     }
 
     @Override
@@ -60,10 +83,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // TODO - view objects
         @BindView(R.id.ivPostImage) ImageView ivPostImage;
         @BindView(R.id.tvDescription) TextView tvDescription;
         @BindView(R.id.tvName) TextView tvName;
+        @BindView(R.id.tvCreatedAt) TextView tvCreatedAt;
+        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,12 +104,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent i = new Intent(context, DetailActivity.class);
                 i.putExtra("postId", post.getObjectId());
 
+                //TODO - add more Pairs?
 //                Pair<View, String> p1 = Pair.create((View)ivPostImage, "postImage");
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, "postImage");
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, (View) ivPostImage, "postImage");
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, (View) ivPostImage, "postImage");
 
-//                context.startActivity(i, options.toBundle());
-                context.startActivity(i);
+                context.startActivity(i, options.toBundle());
             }
         }
     }
@@ -100,5 +124,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void addAll(List<Post> list) {
         posts.addAll(list);
         notifyDataSetChanged();
+    }
+
+    private String getCreationDateTime(Date rawDate) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("hh:mm MM/dd", Locale.US);
+        String strDate = simpleDate.format(rawDate);
+//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
+        return strDate;
     }
 }

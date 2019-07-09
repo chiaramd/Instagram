@@ -8,8 +8,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.model.Post;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,5 +61,19 @@ public class DetailActivity extends AppCompatActivity {
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))
                 .into(ivPostImage);
+
+        ParseUser user = post.getUser();
+        ParseFile profilePic = user.getParseFile("profileImage");
+        if (profilePic != null) {
+            Glide.with(this)
+                    .load(profilePic.getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(ivProfileImage);
+        } else {
+            Glide.with(this)
+                    .load(this.getResources().getIdentifier("ic_user_profile_filled", "drawable", this.getPackageName()))
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(ivProfileImage);
+        }
     }
 }

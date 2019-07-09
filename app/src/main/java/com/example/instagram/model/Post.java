@@ -45,13 +45,20 @@ public class Post extends ParseObject {
         }
 
         public Query getTop() {
-            setLimit(20);
+            setLimit(3);
             orderByDescending("createdAt");
             return this;
         }
 
         public Query withUser() {
             include("user");
+            return this;
+        }
+
+        public Query getNext(int offset) {
+            setLimit(3);
+            orderByDescending("createdAt");
+            setSkip(offset);
             return this;
         }
     }

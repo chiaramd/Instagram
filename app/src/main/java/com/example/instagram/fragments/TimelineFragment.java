@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.instagram.EndlessRecyclerViewScrollListener;
 import com.example.instagram.PostAdapter;
 import com.example.instagram.R;
 import com.example.instagram.model.Post;
@@ -29,9 +30,10 @@ public class TimelineFragment extends Fragment {
     private Unbinder unbinder;
 
     private final String TAG = "TimelineFragment";
-
     ArrayList<Post> posts;
     PostAdapter adapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private LinearLayoutManager linearLayoutManager;
 
     @Nullable
     @Override
@@ -48,15 +50,25 @@ public class TimelineFragment extends Fragment {
 
         posts = new ArrayList<>();
         adapter = new PostAdapter(posts);
-        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        rvPosts.setLayoutManager(linearLayoutManager);
         rvPosts.setAdapter(adapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMorePosts();
+            }
+        };
+        rvPosts.addOnScrollListener(scrollListener);
         populateTimeline();
     }
+
+    // TODO - resume at scroll position after Detail Activity finishes
 
     @Override
     public void onDestroyView() {
@@ -87,13 +99,25 @@ public class TimelineFragment extends Fragment {
 
         postsQuery.findInBackground((objects, e) -> {
             if (e == null) {
-                /*for (int i = 0; i < objects.size(); ++i) {
-                    Log.d(TAG, "Post[" + i + "] = " + objects.get(i).getDescription() + "\nusername = " + objects.get(i).getUser().getUsername());
-                    posts.add(objects.get(i));
-                    adapter.notifyItemInserted(posts.size() - 1);
-                }*/
                 adapter.clear();
                 adapter.addAll(objects);
+            } else {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void loadMorePosts() {
+        Log.d(TAG, "Loading more posts...");
+        final Post.Query postsQuery = new Post.Query();
+        postsQuery.getNext(posts.size()).withUser();
+
+        postsQuery.findInBackground((objects, e) -> {
+            if (e == null) {
+                for (int i = 0; i < objects.size(); ++i) {
+                    posts.add(objects.get(i));
+                    adapter.notifyItemInserted(posts.size() - 1);
+                }
             } else {
                 e.printStackTrace();
             }

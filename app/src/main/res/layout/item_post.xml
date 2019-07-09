@@ -104,4 +104,12 @@
         app:layout_constraintBottom_toTopOf="@+id/ivPostImage"
         app:layout_constraintEnd_toEndOf="@+id/ivPostImage"
         app:srcCompat="@drawable/ic_options" />
+
+    <TextView
+        android:id="@+id/tvCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/created_at_default"
+        app:layout_constraintEnd_toEndOf="@+id/tvDescription"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>

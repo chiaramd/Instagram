@@ -8,6 +8,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +48,7 @@ public class ComposeFragment extends Fragment {
     @BindView(R.id.etDescription) EditText etDescriptionInput;
     @BindView(R.id.btnCreate) Button btnCreate;
     @BindView(R.id.ivPreview) ImageView ivPreview;
+    @BindView(R.id.pbLoading) ProgressBar pbLoading;
     private Unbinder unbinder;
 
     private final String TAG = "ComposeFragment";
@@ -75,53 +78,6 @@ public class ComposeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-    }
-
-    @OnClick(R.id.btnCreate)
-    void post() {
-        Log.d(TAG, "Creating post...");
-        final String description = etDescriptionInput.getText().toString();
-        final ParseUser user = ParseUser.getCurrentUser();
-        createPost(description, parseFile, user);
-        startTimelineFragment();
-    }
-
-    private void startTimelineFragment() {
-        Fragment fragment = new TimelineFragment();
-
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "FRAGMENT_TAG").commit();
-    }
-
-    //should this be public??
-    @OnClick(R.id.btnTakePhoto)
-    void launchCamera() {
-        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        photoFile = getPhotoFileUri("pho to.jpg");
-
-        // wrap File object into a content provider
-        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
-        i.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // the app will crash if no app can handle the intent
-        if (i.resolveActivity(getContext().getPackageManager()) != null) {
-            startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    // Returns the file for a photo stored on disk given the filename
-    private File getPhotoFileUri(String filename) {
-        // access package-specific directories without requesting external read/write runtime permissions
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // create storage directory if it doesn't exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(TAG, "Failed to create directory");
-        }
-
-        // return file target for the photo based on filename
-        File file = new File(mediaStorageDir.getPath() + File.separator + filename);
-        return file;
     }
 
     @Override
@@ -157,6 +113,57 @@ public class ComposeFragment extends Fragment {
         }
     }
 
+    @OnClick(R.id.btnCreate)
+    void post() {
+        Log.d(TAG, "Creating post...");
+        final String description = etDescriptionInput.getText().toString();
+        final ParseUser user = ParseUser.getCurrentUser();
+        createPost(description, parseFile, user);
+    }
+    
+    //should this be public??
+    @OnClick(R.id.btnTakePhoto)
+    void launchCamera() {
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = getPhotoFileUri("pho to.jpg");
+
+        // wrap File object into a content provider
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
+        i.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // the app will crash if no app can handle the intent
+        if (i.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    private void startTimelineFragment() {
+        // Set a delay to see the progress bar
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            pbLoading.setVisibility(ProgressBar.INVISIBLE);
+        }, 1000);
+
+        Fragment fragment = new TimelineFragment();
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "FRAGMENT_TAG").commit();
+    }
+
+    // Returns the file for a photo stored on disk given the filename
+    private File getPhotoFileUri(String filename) {
+        // access package-specific directories without requesting external read/write runtime permissions
+        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        // create storage directory if it doesn't exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(TAG, "Failed to create directory");
+        }
+        // return file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + filename);
+        return file;
+    }
+
     private Bitmap rotateBitmapOrientation(String photoFilePath) {
         // Create and configure BitmapFactory
         BitmapFactory.Options bounds = new BitmapFactory.Options();
@@ -186,6 +193,7 @@ public class ComposeFragment extends Fragment {
     }
 
     private void createPost(String description, ParseFile imageFile, ParseUser user) {
+        pbLoading.setVisibility(ProgressBar.VISIBLE);
         final Post newPost = new Post();
         newPost.setDescription(description);
         newPost.setImage(imageFile);
@@ -194,8 +202,11 @@ public class ComposeFragment extends Fragment {
         newPost.saveInBackground(e -> {
             if (e == null) {
                 Log.d(TAG, "Create post success!");
+                startTimelineFragment();
             } else {
+                Log.e(TAG, "Post not created");
                 e.printStackTrace();
+                pbLoading.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }
