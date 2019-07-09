@@ -8,4 +8,14 @@
     <string name="new_post">New Post</string>
     <string name="user_profile">User Profile</string>
     <string name="logout">Logout</string>
+    <string name="image_caption">My caption here!</string>
+    <string name="post_image">My image here!</string>
+    <string name="name">name</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="created_at">Created 0:00</string>
 </resources>

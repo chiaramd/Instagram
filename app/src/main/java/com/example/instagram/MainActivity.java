@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btnLogin)
-    public void getLoginInfo(Button btn) {
+    public void getLoginInfo() {
         final String username = etUsernameInput.getText().toString();
         final String password = etPasswordInput.getText().toString();
 
@@ -59,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+    }
+
+    @OnClick(R.id.btnSignUp)
+    void signUp() {
+        Intent i = new Intent(MainActivity.this, SignUpActivity.class);
+        String username = etUsernameInput.getText().toString();
+        String password = etPasswordInput.getText().toString();
+        i.putExtra("username", username);
+        i.putExtra("password", password);
+        startActivity(i);
+        finish();
     }
 }
 

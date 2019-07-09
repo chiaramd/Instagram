@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.instagram.BitmapScaler;
 import com.example.instagram.R;
@@ -50,7 +51,8 @@ public class ComposeFragment extends Fragment {
     private final String TAG = "ComposeFragment";
     private final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private String photoFileName = "photo.jpg";
-    File photoFile;
+    private File photoFile;
+    private ParseFile parseFile;
 
     // onCreateView method is called when Fragment should create its View object hierarchy, either dynamically or via XML layout inflation
     @Nullable
@@ -76,16 +78,24 @@ public class ComposeFragment extends Fragment {
     }
 
     @OnClick(R.id.btnCreate)
-    void getPostInfo() {
+    void post() {
         Log.d(TAG, "Creating post...");
-        //TODO extract text before camera!!
-//        final String description = etDescriptionInput.getText().toString();
-//        final ParseUser user = ParseUser.getCurrentUser();
-        launchCamera();
+        final String description = etDescriptionInput.getText().toString();
+        final ParseUser user = ParseUser.getCurrentUser();
+        createPost(description, parseFile, user);
+        startTimelineFragment();
+    }
+
+    private void startTimelineFragment() {
+        Fragment fragment = new TimelineFragment();
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment, "FRAGMENT_TAG").commit();
     }
 
     //should this be public??
-    private void launchCamera() {
+    @OnClick(R.id.btnTakePhoto)
+    void launchCamera() {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri("pho to.jpg");
 
@@ -134,16 +144,13 @@ public class ComposeFragment extends Fragment {
                     fos.write(bytes.toByteArray());
                     fos.close();
                 } catch (IOException e) {
+                    Log.e(TAG, "Error resizing image");
                     e.printStackTrace();
                 }
 
                 // load resized image into preview
                 ivPreview.setImageBitmap(resizedBitmap);
-                final String description = etDescriptionInput.getText().toString();
-                final ParseUser user = ParseUser.getCurrentUser();
-                final ParseFile parseFile = new ParseFile(resizedFile);
-                createPost(description, parseFile, user);
-
+                parseFile = new ParseFile(resizedFile);
             } else {
                 Log.d(TAG, "Image was not taken");
             }

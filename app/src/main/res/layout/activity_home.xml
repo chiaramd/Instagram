@@ -7,13 +7,13 @@
     tools:context=".HomeActivity">
 
     <FrameLayout
-     android:id="@+id/flContainer"
-     android:layout_width="0dp"
-     android:layout_height="0dp"
-     app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-     app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/flContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,6 +27,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:labelVisibilityMode="unlabeled"/>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_logo"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="28dp" />
+
+        <ImageView
+            android:id="@+id/ivInbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/selector_direct_message"
+            tools:layout_editor_absoluteX="40dp"
+            tools:layout_editor_absoluteY="28dp" />
+
+    </androidx.appcompat.widget.Toolbar>
 
 
     <!--<com.google.android.material.appbar.AppBarLayout
