@@ -36,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     @BindView(R.id.btnCreate) Button btnCreate;
     @BindView(R.id.btnRefresh) Button btnRefresh;
     @BindView(R.id.ivPreview) ImageView ivPreview;
+//    @BindView(R.id.pivPreview) ParseImageView pivPreview;
 
     private final String TAG = "HomeActivity";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
@@ -48,24 +49,25 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        /*Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+*/
 //        loadTopPosts();
     }
 
     @OnClick(R.id.btnCreate)
     public void getPostInfo() {
         Log.d(TAG, "Creating post...");
+        //TODO extract text before camera!!
 //        final String description = etDescriptionInput.getText().toString();
 //        final ParseUser user = ParseUser.getCurrentUser();
         launchCamera();
@@ -133,8 +135,6 @@ public class HomeActivity extends AppCompatActivity {
 
                 // load resized image into preview
                 ivPreview.setImageBitmap(resizedBitmap);
-                // TODO - resize bitmap
-                // TODO- load taken image into a preview with .setImageBitmap(takenImage);
                 final String description = etDescriptionInput.getText().toString();
                 final ParseUser user = ParseUser.getCurrentUser();
                 final ParseFile parseFile = new ParseFile(resizedFile);
@@ -209,11 +209,24 @@ public class HomeActivity extends AppCompatActivity {
         // Return result
         return rotatedBitmap;
     }
+
+    @OnClick(R.id.btnLogout)
+    public void logout() {
+        ParseUser.logOut();
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
 }
 
-//accesing files:
-//// getExternalFilesDir() + "/Pictures" should match the declaration in fileprovider.xml paths
-//File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
-//
-//// wrap File object into a content provider. NOTE: authority here should match authority in manifest declaration
-//bmpUri = FileProvider.getUriForFile(MyActivity.this, "com.codepath.fileprovider", file);
+//accessing files:
+/*
+// getExternalFilesDir() + "/Pictures" should match the declaration in fileprovider.xml paths
+File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_" + System.currentTimeMillis() + ".png");
+
+// wrap File object into a content provider. NOTE: authority here should match authority in manifest declaration
+bmpUri = FileProvider.getUriForFile(MyActivity.this, "com.codepath.fileprovider", file);
+*/
+
+//loading ParseImageViews:
+/*pivPreview.setParseFile(post.getMedia());
+                pivPreview.loadInBackground()*/
