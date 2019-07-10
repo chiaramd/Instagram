@@ -35,6 +35,8 @@ public class TimelineFragment extends Fragment {
     private EndlessRecyclerViewScrollListener scrollListener;
     private LinearLayoutManager linearLayoutManager;
 
+    private boolean scrollable = true;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,8 +66,23 @@ public class TimelineFragment extends Fragment {
                 loadMorePosts();
             }
         };
+
         rvPosts.addOnScrollListener(scrollListener);
         populateTimeline();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMorePosts();
+            }
+        };*/
+//        rvPosts.addOnScrollListener(scrollListener);
+        scrollListener.resetState();
+
     }
 
     // TODO - resume at scroll position after Detail Activity finishes
@@ -90,6 +107,8 @@ public class TimelineFragment extends Fragment {
             }
         });
         swipeContainer.setRefreshing(false);
+        scrollListener.resetState();
+
     }
 
     private void populateTimeline() {
@@ -108,19 +127,26 @@ public class TimelineFragment extends Fragment {
     }
 
     private void loadMorePosts() {
-        Log.d(TAG, "Loading more posts...");
-        final Post.Query postsQuery = new Post.Query();
-        postsQuery.getNext(posts.size()).withUser();
+        if (scrollable) {
+            scrollable = false;
+            Log.d(TAG, "Loading more posts...");
+            final Post.Query postsQuery = new Post.Query();
+            postsQuery.getNext(posts.size()).withUser();
 
-        postsQuery.findInBackground((objects, e) -> {
-            if (e == null) {
-                for (int i = 0; i < objects.size(); ++i) {
-                    posts.add(objects.get(i));
-                    adapter.notifyItemInserted(posts.size() - 1);
+
+            postsQuery.findInBackground((objects, e) -> {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); ++i) {
+                        posts.add(objects.get(i));
+                        adapter.notifyItemInserted(posts.size() - 1);
+                    }
+                } else {
+                    e.printStackTrace();
                 }
-            } else {
-                e.printStackTrace();
-            }
-        });
+                scrollable = true;
+            });
+        }
     }
+
+
 }

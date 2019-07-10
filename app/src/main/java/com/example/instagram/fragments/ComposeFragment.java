@@ -8,7 +8,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,14 +44,18 @@ import static android.app.Activity.RESULT_OK;
 
 public class ComposeFragment extends Fragment {
 
+    //TODO - embed Camera from camera API
+
     @BindView(R.id.etDescription) EditText etDescriptionInput;
     @BindView(R.id.btnCreate) Button btnCreate;
     @BindView(R.id.ivPreview) ImageView ivPreview;
     @BindView(R.id.pbLoading) ProgressBar pbLoading;
+    @BindView(R.id.btnChoosePicture) Button btnChoose;
     private Unbinder unbinder;
 
     private final String TAG = "ComposeFragment";
     private final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public final static int PICK_PHOTO_CODE = 1046;
     private String photoFileName = "photo.jpg";
     private File photoFile;
     private ParseFile parseFile;
@@ -86,31 +89,52 @@ public class ComposeFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Log.d(TAG, "Image taken!");
 
-                Bitmap takenImage = rotateBitmapOrientation(photoFile.getAbsolutePath());
-                Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 300);
-                // write the smaller bitmap back to disk
-                // configure byte output stream
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                File resizedFile = getPhotoFileUri(photoFileName + "_resized");
-                try {
-                    resizedFile.createNewFile();
-                    FileOutputStream fos = new FileOutputStream(resizedFile);
-                    // write the bytes of the bitmap to file
-                    fos.write(bytes.toByteArray());
-                    fos.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "Error resizing image");
-                    e.printStackTrace();
-                }
 
-                // load resized image into preview
-                ivPreview.setImageBitmap(resizedBitmap);
-                parseFile = new ParseFile(resizedFile);
+                Bitmap takenImage = rotateBitmapOrientation(photoFile.getAbsolutePath());
+                setBitmap(takenImage);
             } else {
                 Log.d(TAG, "Image was not taken");
             }
+        } else if (requestCode == PICK_PHOTO_CODE) {
+            if (data != null) {
+                Uri photoUri = data.getData();
+                // Do something with the photo based on Uri
+                Bitmap selectedImage = null;
+                try {
+                    selectedImage = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), photoUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                setBitmap(selectedImage);
+
+            } else {
+                Log.d(TAG, "No data");
+            }
         }
+    }
+
+    private void setBitmap(Bitmap bitmap) {
+        Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(bitmap, 300);
+        // write the smaller bitmap back to disk
+        // configure byte output stream
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+        File resizedFile = getPhotoFileUri(photoFileName + "_resized");
+        try {
+            resizedFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(resizedFile);
+            // write the bytes of the bitmap to file
+            fos.write(bytes.toByteArray());
+            fos.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Error resizing image");
+            e.printStackTrace();
+        }
+
+        // load resized image into preview
+        ivPreview.setImageBitmap(resizedBitmap);
+        parseFile = new ParseFile(resizedFile);
+
     }
 
     @OnClick(R.id.btnCreate)
@@ -120,7 +144,7 @@ public class ComposeFragment extends Fragment {
         final ParseUser user = ParseUser.getCurrentUser();
         createPost(description, parseFile, user);
     }
-    
+
     //should this be public??
     @OnClick(R.id.btnTakePhoto)
     void launchCamera() {
@@ -138,11 +162,12 @@ public class ComposeFragment extends Fragment {
     }
 
     private void startTimelineFragment() {
-        // Set a delay to see the progress bar
+        /*// Set a delay to see the progress bar
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
             pbLoading.setVisibility(ProgressBar.INVISIBLE);
-        }, 1000);
+        }, 1000);*/
+        pbLoading.setVisibility(ProgressBar.INVISIBLE);
 
         Fragment fragment = new TimelineFragment();
 
@@ -210,6 +235,20 @@ public class ComposeFragment extends Fragment {
             }
         });
     }
+
+    @OnClick(R.id.btnChoosePicture)
+    void onPickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+           // Bring up gallery to select a photo
+           startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
 }
 
 //accessing files:
@@ -224,3 +263,33 @@ bmpUri = FileProvider.getUriForFile(MyActivity.this, "com.codepath.fileprovider"
 //loading ParseImageViews:
 /*pivPreview.setParseFile(post.getMedia());
                 pivPreview.loadInBackground()*/
+
+
+//// PICK_PHOTO_CODE is a constant integer
+//public final static int PICK_PHOTO_CODE = 1046;
+//
+//// Trigger gallery selection for a photo
+//public void onPickPhoto(View view) {
+//    // Create intent for picking a photo from the gallery
+//    Intent intent = new Intent(Intent.ACTION_PICK,
+//        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//    // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+//    // So as long as the result is not null, it's safe to use the intent.
+//    if (intent.resolveActivity(getPackageManager()) != null) {
+//       // Bring up gallery to select a photo
+//       startActivityForResult(intent, PICK_PHOTO_CODE);
+//    }
+//}
+//
+//@Override
+//public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//    if (data != null) {
+//        Uri photoUri = data.getData();
+//        // Do something with the photo based on Uri
+//        Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+//        // Load the selected image into a preview
+//        ImageView ivPreview = (ImageView) findViewById(R.id.ivPreview);
+//        ivPreview.setImageBitmap(selectedImage);
+//    }
+//}

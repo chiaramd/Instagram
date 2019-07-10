@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity {
         String postId = getIntent().getStringExtra("postId");
 
         final Post.Query postsQuery = new Post.Query();
-        postsQuery.getTop().withUser();
+        postsQuery.getTop().withUser(); //TODO - no getTop()??
 
         try {
             post = postsQuery.get(postId);
