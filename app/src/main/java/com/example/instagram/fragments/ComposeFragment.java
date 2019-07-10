@@ -1,5 +1,6 @@
 package com.example.instagram.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -27,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.instagram.BitmapScaler;
 import com.example.instagram.R;
 import com.example.instagram.model.Post;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -50,12 +53,12 @@ public class ComposeFragment extends Fragment {
     @BindView(R.id.btnCreate) Button btnCreate;
     @BindView(R.id.ivPreview) ImageView ivPreview;
     @BindView(R.id.pbLoading) ProgressBar pbLoading;
-    @BindView(R.id.btnChoosePicture) Button btnChoose;
+//    @BindView(R.id.btnChoosePicture) Button btnChoose;
     private Unbinder unbinder;
 
     private final String TAG = "ComposeFragment";
     private final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    public final static int PICK_PHOTO_CODE = 1046;
+    private final static int PICK_PHOTO_CODE = 1046;
     private String photoFileName = "photo.jpg";
     private File photoFile;
     private ParseFile parseFile;
@@ -145,9 +148,26 @@ public class ComposeFragment extends Fragment {
         createPost(description, parseFile, user);
     }
 
-    //should this be public??
-    @OnClick(R.id.btnTakePhoto)
-    void launchCamera() {
+    @OnClick(R.id.ivPreview)
+    void setPhoto() {
+        AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(getContext())
+                .setTitle("Add a profile picture")
+                .setNegativeButton("Take a picture", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        launchCamera();
+                    }
+                })
+                .setPositiveButton("Choose an image", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        pickPhoto();
+                    }
+                })
+                .show();
+    }
+
+    private void launchCamera() {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri("pho to.jpg");
 
@@ -159,6 +179,38 @@ public class ComposeFragment extends Fragment {
         if (i.resolveActivity(getContext().getPackageManager()) != null) {
             startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
+    }
+
+    private void pickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
+
+    private void createPost(String description, ParseFile imageFile, ParseUser user) {
+        pbLoading.setVisibility(ProgressBar.VISIBLE);
+        final Post newPost = new Post();
+        newPost.setDescription(description);
+        newPost.setImage(imageFile);
+        newPost.setUser(user);
+
+        newPost.saveInBackground(e -> {
+            if (e == null) {
+                Log.d(TAG, "Create post success!");
+                startTimelineFragment();
+            } else {
+                Log.e(TAG, "Post not created");
+                e.printStackTrace();
+                pbLoading.setVisibility(ProgressBar.INVISIBLE);
+            }
+        });
     }
 
     private void startTimelineFragment() {
@@ -217,38 +269,6 @@ public class ComposeFragment extends Fragment {
         return rotatedBitmap;
     }
 
-    private void createPost(String description, ParseFile imageFile, ParseUser user) {
-        pbLoading.setVisibility(ProgressBar.VISIBLE);
-        final Post newPost = new Post();
-        newPost.setDescription(description);
-        newPost.setImage(imageFile);
-        newPost.setUser(user);
-
-        newPost.saveInBackground(e -> {
-            if (e == null) {
-                Log.d(TAG, "Create post success!");
-                startTimelineFragment();
-            } else {
-                Log.e(TAG, "Post not created");
-                e.printStackTrace();
-                pbLoading.setVisibility(ProgressBar.INVISIBLE);
-            }
-        });
-    }
-
-    @OnClick(R.id.btnChoosePicture)
-    void onPickPhoto() {
-        // Create intent for picking a photo from the gallery
-        Intent intent = new Intent(Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-           // Bring up gallery to select a photo
-           startActivityForResult(intent, PICK_PHOTO_CODE);
-        }
-    }
 }
 
 //accessing files:
