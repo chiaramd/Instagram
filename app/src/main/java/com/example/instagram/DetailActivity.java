@@ -18,7 +18,10 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,11 +45,6 @@ public class DetailActivity extends AppCompatActivity {
     private boolean isLikedByUser = false;
     ArrayList<Comment> comments;
     CommentAdapter adapter;
-    private LinearLayoutManager linearLayoutManager;
-    /*ArrayList<Post> posts;
-    PostAdapter adapter;
-    private EndlessRecyclerViewScrollListener scrollListener;
-    private LinearLayoutManager linearLayoutManager;*/
 
     private final String TAG = "DetailActivity";
 
@@ -76,11 +74,18 @@ public class DetailActivity extends AppCompatActivity {
 
         tvDescription.setText(post.getDescription());
         tvName.setText(post.getUser().getUsername());
-        tvNumLikes.setText(String.format("%s", post.getLikes()));
-        String[] createArray = post.getCreatedAt().toString().split(" ");
+        Integer numLikes = post.getLikes();
+        if (numLikes == 1) {
+            tvNumLikes.setText(String.format("%s Like", numLikes));
+        } else {
+            tvNumLikes.setText(String.format("%s Likes", numLikes));
+        }
+       /* String[] createArray = post.getCreatedAt().toString().split(" ");
         String[] createTimeArray = createArray[3].split(":");
-        String created = String.format("Created at %s:%s on %s, %s %s", createTimeArray[0], createTimeArray[1], createArray[0], createArray[1], createArray[2]);
-        tvCreatedAt.setText(created);
+        String created = String.format("Created at %s:%s on %s, %s %s", createTimeArray[0], createTimeArray[1], createArray[0], createArray[1], createArray[2]);*/
+        Date rawDate = post.getCreatedAt();
+
+        tvCreatedAt.setText(String.format("Created at %s on %s", getCreationTime(rawDate), getCreationDate(rawDate)));
         Glide.with(this)
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))
@@ -102,16 +107,11 @@ public class DetailActivity extends AppCompatActivity {
 
         comments = new ArrayList<>();
         adapter = new CommentAdapter(comments);
-        linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvComments.setLayoutManager(linearLayoutManager);
         rvComments.setAdapter(adapter);
 
         getComments();
-        /*posts = new ArrayList<>();
-        adapter = new PostAdapter(posts);
-        linearLayoutManager = new LinearLayoutManager(getContext());
-        rvPosts.setLayoutManager(linearLayoutManager);
-        rvPosts.setAdapter(adapter);*/
     }
 
     @OnClick(R.id.ivHeart)
@@ -176,5 +176,19 @@ public class DetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+    }
+
+    private String getCreationDate(Date rawDate) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd", Locale.US);
+        String strDate = simpleDate.format(rawDate);
+//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
+        return strDate;
+    }
+
+    private String getCreationTime(Date rawDate) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("hh:mm", Locale.US);
+        String strDate = simpleDate.format(rawDate);
+//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
+        return strDate;
     }
 }

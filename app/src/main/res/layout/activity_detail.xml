@@ -26,13 +26,12 @@
         android:id="@+id/tvDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/image_caption"
         android:transitionName="description"
         app:layout_constraintEnd_toEndOf="@+id/ivPostImage"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/ivPostImage"
-        app:layout_constraintTop_toBottomOf="@+id/ivHeart" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNumLikes" />
 
     <TextView
         android:id="@+id/tvName"
@@ -42,6 +41,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/name"
+        android:textStyle="bold"
         android:transitionName="name"
         app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
         app:layout_constraintTop_toTopOf="parent" />
@@ -73,9 +73,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
-        app:layout_constraintStart_toEndOf="@+id/tvNumLikes"
+        app:layout_constraintStart_toEndOf="@+id/ivHeart"
         app:layout_constraintTop_toTopOf="@+id/ivHeart"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_comment" />
 
     <ImageView
@@ -111,7 +110,6 @@
         android:id="@+id/tvCreatedAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/created_at"
@@ -122,12 +120,10 @@
         android:id="@+id/tvNumLikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="0"
-        app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
-        app:layout_constraintStart_toEndOf="@+id/ivHeart"
-        app:layout_constraintTop_toTopOf="@+id/ivHeart" />
+        android:text="0 likes"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/ivPostImage"
+        app:layout_constraintTop_toBottomOf="@+id/ivHeart" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvComments"

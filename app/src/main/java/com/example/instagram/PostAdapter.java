@@ -58,7 +58,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.isLikedByUser = post.isLikedBy(ParseUser.getCurrentUser().getUsername());
 
         holder.ivHeart.setSelected(holder.isLikedByUser);
-        holder.tvNumLikes.setText(String.format("%s", post.getLikes()));
+        Integer numLikes = post.getLikes();
+        if (numLikes == 1) {
+            holder.tvNumLikes.setText(String.format("%s Like", numLikes));
+        } else {
+            holder.tvNumLikes.setText(String.format("%s Likes", numLikes));
+        }
         holder.tvDescription.setText(post.getDescription());
         holder.tvName.setText(post.getUser().getUsername());
         holder.tvCreatedAt.setText(getCreationDateTime(post.getCreatedAt()));
