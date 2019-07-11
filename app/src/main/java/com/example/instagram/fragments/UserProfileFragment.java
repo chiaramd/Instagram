@@ -1,6 +1,5 @@
 package com.example.instagram.fragments;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -142,21 +141,10 @@ public class UserProfileFragment extends Fragment {
 
     @OnClick(R.id.ivProfileImage)
     void addProfile() {
-        //TODO - check if profile image exists?
         AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(getContext())
-                .setTitle("Add a profile picture")
-                .setNegativeButton("Take a picture", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        launchCamera();
-                    }
-                })
-                .setPositiveButton("Choose an image", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        pickPhoto();
-                    }
-                })
+                .setTitle("Set profile picture")
+                .setNegativeButton("Take a picture", (dialogInterface, i) -> launchCamera())
+                .setPositiveButton("Choose an image", (dialogInterface, i) -> pickPhoto())
                 .show();
 
     }

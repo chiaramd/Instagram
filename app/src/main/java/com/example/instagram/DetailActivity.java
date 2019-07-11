@@ -76,9 +76,9 @@ public class DetailActivity extends AppCompatActivity {
         tvName.setText(post.getUser().getUsername());
         Integer numLikes = post.getLikes();
         if (numLikes == 1) {
-            tvNumLikes.setText(String.format("%s Like", numLikes));
+            tvNumLikes.setText(String.format("%s like", numLikes));
         } else {
-            tvNumLikes.setText(String.format("%s Likes", numLikes));
+            tvNumLikes.setText(String.format("%s likes", numLikes));
         }
        /* String[] createArray = post.getCreatedAt().toString().split(" ");
         String[] createTimeArray = createArray[3].split(":");
@@ -118,20 +118,28 @@ public class DetailActivity extends AppCompatActivity {
     void like() {
         if (!isLikedByUser) {
             ivHeart.setSelected(true);
-            Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+            int numLikes = Integer.parseInt(tvNumLikes.getText().toString().split(" ")[0]);
             isLikedByUser = true;
             post.setLikes(numLikes + 1);
             post.add(ParseUser.getCurrentUser().getUsername());
             post.saveInBackground();
-            tvNumLikes.setText(String.format("%s", numLikes + 1));
+            if (numLikes == 0) {
+                tvNumLikes.setText(String.format("%s like", numLikes + 1));
+            } else {
+                tvNumLikes.setText(String.format("%s likes", numLikes + 1));
+            }
         } else {
             ivHeart.setSelected(false);
-            Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+            int numLikes = Integer.parseInt(tvNumLikes.getText().toString().split(" ")[0]);
             isLikedByUser = false;
             post.setLikes(numLikes - 1);
             post.remove(ParseUser.getCurrentUser().getUsername());
             post.saveInBackground();
-            tvNumLikes.setText(String.format("%s", numLikes - 1));
+            if (numLikes == 2) {
+                tvNumLikes.setText(String.format("%s like", numLikes - 1));
+            } else {
+                tvNumLikes.setText(String.format("%s likes", numLikes - 1));
+            }
         }
     }
 
@@ -167,7 +175,6 @@ public class DetailActivity extends AppCompatActivity {
         newComment.saveInBackground(e -> {
             if (e == null) {
                 Log.d(TAG, "Create comment success!");
-                //reload
                 comments.add(newComment);
                 adapter.notifyItemInserted(comments.size() - 1);
 
@@ -181,14 +188,12 @@ public class DetailActivity extends AppCompatActivity {
     private String getCreationDate(Date rawDate) {
         SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd", Locale.US);
         String strDate = simpleDate.format(rawDate);
-//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
         return strDate;
     }
 
     private String getCreationTime(Date rawDate) {
         SimpleDateFormat simpleDate = new SimpleDateFormat("hh:mm", Locale.US);
         String strDate = simpleDate.format(rawDate);
-//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
         return strDate;
     }
 }

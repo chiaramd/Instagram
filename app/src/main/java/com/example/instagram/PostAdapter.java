@@ -60,9 +60,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.ivHeart.setSelected(holder.isLikedByUser);
         Integer numLikes = post.getLikes();
         if (numLikes == 1) {
-            holder.tvNumLikes.setText(String.format("%s Like", numLikes));
+            holder.tvNumLikes.setText(String.format("%s like", numLikes));
         } else {
-            holder.tvNumLikes.setText(String.format("%s Likes", numLikes));
+            holder.tvNumLikes.setText(String.format("%s likes", numLikes));
         }
         holder.tvDescription.setText(post.getDescription());
         holder.tvName.setText(post.getUser().getUsername());
@@ -113,20 +113,28 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Post post = posts.get(pos);
                 if (!isLikedByUser) {
                     ivHeart.setSelected(true);
-                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString().split(" ")[0]);
                     isLikedByUser = true;
                     post.setLikes(numLikes + 1);
                     post.add(ParseUser.getCurrentUser().getUsername());
                     post.saveInBackground();
-                    tvNumLikes.setText(String.format("%s", numLikes + 1));
+                    if (numLikes == 0) {
+                        tvNumLikes.setText(String.format("%s like", numLikes + 1));
+                    } else {
+                        tvNumLikes.setText(String.format("%s likes", numLikes + 1));
+                    }
                 } else {
                     ivHeart.setSelected(false);
-                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString().split(" ")[0]);
                     isLikedByUser = false;
                     post.setLikes(numLikes - 1);
                     post.remove(ParseUser.getCurrentUser().getUsername());
                     post.saveInBackground();
-                    tvNumLikes.setText(String.format("%s", numLikes - 1));
+                    if (numLikes == 2) {
+                        tvNumLikes.setText(String.format("%s like", numLikes - 1));
+                    } else {
+                        tvNumLikes.setText(String.format("%s likes", numLikes - 1));
+                    }
                 }
             });
         }
@@ -140,23 +148,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent i = new Intent(context, DetailActivity.class);
                 i.putExtra("postId", post.getObjectId());
 
-                //TODO - add more Pairs?
-//                Pair<View, String> p1 = Pair.create((View)ivPostImage, "postImage");
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, "postImage");
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, (View) ivPostImage, "postImage");
-
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, ivPostImage, "postImage");
                 context.startActivity(i, options.toBundle());
             }
         }
     }
 
-    // Clean all elements of the recycler
     public void clear() {
         posts.clear();
         notifyDataSetChanged();
     }
 
-    // Add a list of items
     public void addAll(List<Post> list) {
         posts.addAll(list);
         notifyDataSetChanged();
@@ -165,7 +167,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private String getCreationDateTime(Date rawDate) {
         SimpleDateFormat simpleDate = new SimpleDateFormat("hh:mm MM/dd", Locale.US);
         String strDate = simpleDate.format(rawDate);
-//        Log.d(TAG, "\nInitial date: " + rawDate.toString() + "\nParsed date: " + strDate);
         return strDate;
     }
 }
