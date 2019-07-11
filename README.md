@@ -41,6 +41,8 @@ The following **additional** features are implemented:
   - [X] User can select a photo from the gallery
   - [X] Thumbnail in the capture view displays the last gallery photo and selecting it takes the user to the gallery
   - [X] Tapping on the loaded preview image allows the user to re-take/select a photo
+- Profile page
+  - [X] User's posts are displayed in a gridview and selecting a photo loads the detail page for that post
 
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
@@ -65,11 +67,10 @@ List an 3rd party libraries, icons, graphics, or other assets you used in your a
 
 ## Notes
 
-Describe any challenges encountered while building the app.
 
 ## License
 
-    Copyright [yyyy] [name of copyright owner]
+    Copyright 2019 Chiara Darnton
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
