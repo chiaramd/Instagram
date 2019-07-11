@@ -54,6 +54,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PostAdapter.ViewHolder holder, int position) {
         Post post = posts.get(position);
+
+        holder.isLikedByUser = post.isLikedBy(ParseUser.getCurrentUser().getUsername());
+
+        holder.ivHeart.setSelected(holder.isLikedByUser);
+        holder.tvNumLikes.setText(String.format("%s", post.getLikes()));
         holder.tvDescription.setText(post.getDescription());
         holder.tvName.setText(post.getUser().getUsername());
         holder.tvCreatedAt.setText(getCreationDateTime(post.getCreatedAt()));
@@ -88,11 +93,37 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         @BindView(R.id.tvName) TextView tvName;
         @BindView(R.id.tvCreatedAt) TextView tvCreatedAt;
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+        @BindView(R.id.ivHeart) ImageView ivHeart;
+        @BindView(R.id.tvNumLikes) TextView tvNumLikes;
+
+        boolean isLikedByUser = false;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+
+            ivHeart.setOnClickListener(view -> {
+                int pos = getAdapterPosition();
+                Post post = posts.get(pos);
+                if (!isLikedByUser) {
+                    ivHeart.setSelected(true);
+                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+                    isLikedByUser = true;
+                    post.setLikes(numLikes + 1);
+                    post.add(ParseUser.getCurrentUser().getUsername());
+                    post.saveInBackground();
+                    tvNumLikes.setText(String.format("%s", numLikes + 1));
+                } else {
+                    ivHeart.setSelected(false);
+                    Integer numLikes = Integer.parseInt(tvNumLikes.getText().toString());
+                    isLikedByUser = false;
+                    post.setLikes(numLikes - 1);
+                    post.remove(ParseUser.getCurrentUser().getUsername());
+                    post.saveInBackground();
+                    tvNumLikes.setText(String.format("%s", numLikes - 1));
+                }
+            });
         }
 
         @Override

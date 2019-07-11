@@ -73,8 +73,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
-        app:layout_constraintStart_toEndOf="@+id/ivHeart"
+        app:layout_constraintStart_toEndOf="@+id/tvNumLikes"
         app:layout_constraintTop_toTopOf="@+id/ivHeart"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_comment" />
 
     <ImageView
@@ -116,4 +117,45 @@
         android:text="@string/created_at"
         app:layout_constraintEnd_toEndOf="@+id/tvDescription"
         app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+    <TextView
+        android:id="@+id/tvNumLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
+        app:layout_constraintStart_toEndOf="@+id/ivHeart"
+        app:layout_constraintTop_toTopOf="@+id/ivHeart" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCreatedAt"
+        app:layout_constraintBottom_toTopOf="@+id/etCompose"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etCompose"
+        android:hint="@string/comment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnComment"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnComment"
+        android:text="@string/comment_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

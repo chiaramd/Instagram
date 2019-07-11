@@ -16,8 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ImageView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -151,7 +152,7 @@ public class ComposeFragment extends Fragment {
     @OnClick(R.id.ivPreview)
     void setPhoto() {
         AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(getContext())
-                .setTitle("Add a profile picture")
+                .setTitle("Select an image")
                 .setNegativeButton("Take a picture", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

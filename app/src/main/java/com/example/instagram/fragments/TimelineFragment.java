@@ -74,15 +74,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        /*scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadMorePosts();
-            }
-        };*/
-//        rvPosts.addOnScrollListener(scrollListener);
         scrollListener.resetState();
-
     }
 
     // TODO - resume at scroll position after Detail Activity finishes
@@ -147,6 +139,4 @@ public class TimelineFragment extends Fragment {
             });
         }
     }
-
-
 }

@@ -24,12 +24,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.BitmapScaler;
+import com.example.instagram.EndlessRecyclerViewScrollListener;
 import com.example.instagram.MainActivity;
+import com.example.instagram.PostGridAdapter;
 import com.example.instagram.R;
+import com.example.instagram.model.Post;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -38,6 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +56,7 @@ public class UserProfileFragment extends Fragment {
     @BindView(R.id.btnLogout) Button btnLogout;
     @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
     @BindView(R.id.tvUsername) TextView tvUsername;
+    @BindView(R.id.rvPosts) RecyclerView rvPosts;
     private Unbinder unbinder;
 
     private final String TAG = "UserProfileFragment";
@@ -60,6 +67,13 @@ public class UserProfileFragment extends Fragment {
 
     private File photoFile;
     private ParseUser user;
+
+    ArrayList<Post> posts;
+    PostGridAdapter adapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private GridLayoutManager gridLayoutManager;
+
+    private boolean scrollable = true;
 
     @Nullable
     @Override
@@ -91,6 +105,25 @@ public class UserProfileFragment extends Fragment {
         }
 
         tvUsername.setText(user.getUsername());
+
+        posts = new ArrayList<>();
+        adapter = new PostGridAdapter(posts);
+        gridLayoutManager = new GridLayoutManager(getContext(), 3);
+        rvPosts.setLayoutManager(gridLayoutManager);
+        rvPosts.setAdapter(adapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMorePosts();
+            }
+        };
+        rvPosts.addOnScrollListener(scrollListener);
+        populateTimeline();
     }
 
     @Override
@@ -109,6 +142,7 @@ public class UserProfileFragment extends Fragment {
 
     @OnClick(R.id.ivProfileImage)
     void addProfile() {
+        //TODO - check if profile image exists?
         AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Add a profile picture")
                 .setNegativeButton("Take a picture", new DialogInterface.OnClickListener() {
@@ -125,19 +159,6 @@ public class UserProfileFragment extends Fragment {
                 })
                 .show();
 
-    }
-
-    void pickPhoto() {
-        // Create intent for picking a photo from the gallery
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Bring up gallery to select a photo
-            startActivityForResult(intent, PICK_PHOTO_CODE);
-        }
     }
 
     @Override
@@ -218,7 +239,20 @@ public class UserProfileFragment extends Fragment {
         return file;
     }
 
-    void launchCamera() {
+    private void pickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
+
+    private void launchCamera() {
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         photoFile = getPhotoFileUri("pho to.jpg");
 
@@ -258,5 +292,42 @@ public class UserProfileFragment extends Fragment {
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         // Return result
         return rotatedBitmap;
+    }
+
+    private void populateTimeline() {
+        Log.d(TAG, "Populating timeline...");
+        final Post.Query postsQuery = new Post.Query();
+        postsQuery.getUserPosts().getTop().withUser();
+
+        postsQuery.findInBackground((objects, e) -> {
+            if (e == null) {
+                adapter.clear();
+                adapter.addAll(objects);
+            } else {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void loadMorePosts() {
+        if (scrollable) {
+            scrollable = false;
+            Log.d(TAG, "Loading more posts...");
+            final Post.Query postsQuery = new Post.Query();
+            postsQuery.getUserPosts().getNext(posts.size()).withUser();
+
+
+            postsQuery.findInBackground((objects, e) -> {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); ++i) {
+                        posts.add(objects.get(i));
+                        adapter.notifyItemInserted(posts.size() - 1);
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+                scrollable = true;
+            });
+        }
     }
 }

@@ -72,8 +72,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
-        app:layout_constraintStart_toEndOf="@+id/ivHeart"
+        app:layout_constraintStart_toEndOf="@+id/tvNumLikes"
         app:layout_constraintTop_toTopOf="@+id/ivHeart"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_comment" />
 
     <ImageView
@@ -112,4 +113,15 @@
         android:text="@string/created_at_default"
         app:layout_constraintEnd_toEndOf="@+id/tvDescription"
         app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+    <TextView
+        android:id="@+id/tvNumLikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/ivHeart"
+        app:layout_constraintStart_toEndOf="@+id/ivHeart"
+        app:layout_constraintTop_toTopOf="@+id/ivHeart" />
 </androidx.constraintlayout.widget.ConstraintLayout>
