@@ -8,7 +8,7 @@ Time spent: 20 hours spent in total
 
 The following **required** functionality is completed:
 
-- [ ] User sees app icon in home screen.
+- [X] User sees app icon in home screen.
 - [X] User can sign up to create a new account using Parse authentication
 - [X] User can log in and log out of his or her account
 - [X] The current signed in user is persisted across app restarts
@@ -20,7 +20,7 @@ The following **required** functionality is completed:
 The following **stretch** features are implemented:
 
 - [ ] Style the login page to look like the real Instagram login page.
-- [ ] Style the feed to look like the real Instagram feed.
+- [X] Style the feed to look like the real Instagram feed.
 - [X] User should switch between different tabs - viewing all posts (feed view), capture (camera and photo gallery view) and profile tabs (posts made) using a Bottom Navigation View.
 - [X] User can load more posts once he or she reaches the bottom of the feed using infinite scrolling.
 - [X] Show the username and creation time for each post
@@ -47,14 +47,14 @@ The following **additional** features are implemented:
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1.
-2.
+1. UI
+2. Parse modelling
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='Parstagram_GIF' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
