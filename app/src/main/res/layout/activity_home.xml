@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/clToolbar" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:labelVisibilityMode="unlabeled"/>
 
-    <androidx.appcompat.widget.Toolbar
+    <!--<androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,6 +38,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivCamera"
+            app:srcCompat="@drawable/ic_camera_no_fill"/>
 
         <ImageView
             android:id="@+id/ivLogo"
@@ -55,31 +61,50 @@
             tools:layout_editor_absoluteX="40dp"
             tools:layout_editor_absoluteY="28dp" />
 
-    </androidx.appcompat.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>-->
 
-
-    <!--<com.google.android.material.appbar.AppBarLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="#00DB1515"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <ImageView
+            android:id="@+id/ivCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivInbox"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivInbox"
+            app:srcCompat="@drawable/ic_camera_no_fill" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="159dp"
+            android:layout_height="41dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivInbox"
+            app:layout_constraintEnd_toStartOf="@+id/ivInbox"
+            app:layout_constraintStart_toEndOf="@+id/ivCamera"
+            app:layout_constraintTop_toTopOf="@+id/ivInbox"
+            app:srcCompat="@drawable/ig_logo_big" />
 
-    <include layout="@layout/content_home" />
+        <ImageView
+            android:id="@+id/ivInbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/selector_direct_message" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

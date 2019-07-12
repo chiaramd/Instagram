@@ -47,6 +47,11 @@ public class PostGridAdapter extends RecyclerView.Adapter<PostGridAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PostGridAdapter.ViewHolder holder, int position) {
         Post post = posts.get(position);
+
+        Glide.with(context)
+                .load(post.getImage().getUrl())
+                .apply(bitmapTransform(new CropSquareTransformation()))
+                .into(holder.ivPostImage);
         Glide.with(context)
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))

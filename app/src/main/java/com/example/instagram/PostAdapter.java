@@ -3,6 +3,8 @@ package com.example.instagram;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,9 +69,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.tvDescription.setText(post.getDescription());
         holder.tvName.setText(post.getUser().getUsername());
         holder.tvCreatedAt.setText(getCreationDateTime(post.getCreatedAt()));
+
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        int width = metrics.widthPixels;
+
         Glide.with(context)
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))
+                .apply(new RequestOptions().override(width, width))
                 .into(holder.ivPostImage);
 
         ParseUser user = post.getUser();

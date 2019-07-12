@@ -1,6 +1,7 @@
 package com.example.instagram;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,6 +41,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.ivHeart) ImageView ivHeart;
     @BindView(R.id.rvComments) RecyclerView rvComments;
     @BindView(R.id.etCompose) EditText etCompose;
+    @BindView(R.id.tvComment) TextView tvComment;
 
     Post post;
     private boolean isLikedByUser = false;
@@ -80,15 +82,16 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             tvNumLikes.setText(String.format("%s likes", numLikes));
         }
-       /* String[] createArray = post.getCreatedAt().toString().split(" ");
-        String[] createTimeArray = createArray[3].split(":");
-        String created = String.format("Created at %s:%s on %s, %s %s", createTimeArray[0], createTimeArray[1], createArray[0], createArray[1], createArray[2]);*/
         Date rawDate = post.getCreatedAt();
 
         tvCreatedAt.setText(String.format("Created at %s on %s", getCreationTime(rawDate), getCreationDate(rawDate)));
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
         Glide.with(this)
                 .load(post.getImage().getUrl())
                 .apply(bitmapTransform(new CropSquareTransformation()))
+                .apply(new RequestOptions().override(width, width))
                 .into(ivPostImage);
 
         ParseUser user = post.getUser();
@@ -143,7 +146,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.btnComment)
+    @OnClick(R.id.tvComment)
     void createComment() {
         String content = etCompose.getText().toString();
         newComment(content);

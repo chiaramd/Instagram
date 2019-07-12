@@ -62,7 +62,6 @@ public class UserProfileFragment extends Fragment {
     private final static int PICK_PHOTO_CODE = 1046;
     private final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private String photoFileName = "photo.jpg";
-    private boolean profileImageExists;
 
     private File photoFile;
     private ParseUser user;
@@ -93,14 +92,12 @@ public class UserProfileFragment extends Fragment {
                     .load(profilePic.getUrl())
                     .apply(RequestOptions.circleCropTransform())
                     .into(ivProfileImage);
-            profileImageExists = true;
         } else {
             Log.d(TAG, "No profile image");
             Glide.with(this)
                     .load(ContextCompat.getDrawable(getActivity(), R.drawable.layer))
                     .apply(RequestOptions.circleCropTransform())
                     .into(ivProfileImage);
-            profileImageExists = false;
         }
 
         tvUsername.setText(user.getUsername());
@@ -206,7 +203,6 @@ public class UserProfileFragment extends Fragment {
         ParseFile parseFile = new ParseFile(resizedFile);
         user.put("profileImage", parseFile);
         user.saveInBackground();
-        profileImageExists = true;
         Glide.with(this)
                 .load(resizedBitmap)
                 .apply(RequestOptions.circleCropTransform())

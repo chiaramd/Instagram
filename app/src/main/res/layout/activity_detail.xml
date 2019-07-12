@@ -9,12 +9,10 @@
     <ImageView
         android:id="@+id/ivPostImage"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:transitionName="postImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -130,28 +128,44 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCreatedAt"
-        app:layout_constraintBottom_toTopOf="@+id/etCompose"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvCreatedAt" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/etCompose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etCompose"
+        app:srcCompat="@android:color/background_light" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/etCompose"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="#FFFFFF"
         android:hint="@string/comment"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnComment"/>
-    <Button
+        app:layout_constraintEnd_toStartOf="@+id/tvComment"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnComment"
-        android:text="@string/comment_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginEnd="16dp"
+        android:text="Post"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#2196F3"
+        app:layout_constraintBottom_toBottomOf="@+id/etCompose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etCompose" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

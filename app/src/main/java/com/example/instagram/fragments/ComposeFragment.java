@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -39,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.instagram.BitmapScaler;
 import com.example.instagram.R;
 import com.example.instagram.model.Post;
@@ -55,6 +57,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import jp.wasabeef.glide.transformations.CropSquareTransformation;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class ComposeFragment extends Fragment {
 
@@ -164,7 +169,15 @@ public class ComposeFragment extends Fragment {
     }
 
     private void setPreview(Bitmap bitmap) {
-        ivPreview.setImageBitmap(bitmap);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        Glide.with(this)
+                .load(bitmap)
+                .apply(bitmapTransform(new CropSquareTransformation()))
+                .apply(new RequestOptions().override(width, width))
+                .into(ivPreview);
         Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(bitmap, 300);
         // Write the smaller bitmap back to disk
         // Configure byte output stream
@@ -234,7 +247,11 @@ public class ComposeFragment extends Fragment {
         // Rotate bitmap
         int rotationAngle = getRotationAngle(photoFilePath);
         Matrix matrix = new Matrix();
-        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        try {
+            matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         return rotatedBitmap;
     }

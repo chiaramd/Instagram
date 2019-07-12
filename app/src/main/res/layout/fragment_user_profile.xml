@@ -10,13 +10,14 @@
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="logout"
         android:text="@string/logout"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/ivProfileImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/ivProfileImage" />
 
     <ImageView
         android:id="@+id/ivProfileImage"
@@ -34,8 +35,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:text="@string/username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfileImage"
         app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
         app:layout_constraintTop_toTopOf="@+id/ivProfileImage" />
